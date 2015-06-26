@@ -2,7 +2,7 @@
 
 <project name="name-of-project" default="build" basedir=".">
  <target name="build"
-   depends="prepare,lint,phploc,pdepend,phpmd-ci,phpcs-ci,phpcpd,phpdox,phpunit,phpcb"/>
+   depends="prepare,lint,phploc,pdepend,phpmd-ci,phpcs-ci,phpcpd,phpdox,phpunit,phpcb,csslint"/>
 
  <target name="build-parallel"
    depends="prepare,lint,tools-parallel,phpunit,phpcb"/>
@@ -156,6 +156,16 @@
  	
  	<chown file="./build" user="jenkins.jenkins" />
  	<chown file="./generatedJUnitFiles" user="jenkins.jenkins" />
+ </target>
+ 
+ <target name="csslint" description="Run the CSSLint tool on CSS files">
+   <fileset dir="${basedir}/src" id="cssfiles.raw">
+     <include name="**/*.css" />
+   </fileset>
+   <pathconvert pathsep=" " property="cssfiles.clean" refid="cssfiles.raw" />
+   <exec executable="csslint" output="${basedir}/build/logs/csslint.xml">
+	 <arg line="--warnings=box-model,floats --errors=ids,important --format=lint-xml ${cssfiles.clean}" />	
+	</exec>
  </target>
  
 </project>
